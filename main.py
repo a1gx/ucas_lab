@@ -14,6 +14,8 @@ class MyWindow(QDialog):
         for _ in interfaces:
             _ui.eth_comboBox.addItem(_)
         _ui.eth_comboBox.setCurrentIndex(-1)
+        _ui.stop_btn.setEnabled(False)
+        _ui.begin_btn.setAutoDefault(False)
 
 
 if __name__ == '__main__':
