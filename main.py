@@ -19,8 +19,8 @@ class Sniffer(QThread):
 
     def __init__(self, nt_card):
         super(Sniffer, self).__init__()
-        # self.init_filter = 'http || tcp || udp || arp || icmp'  # 暂时只考虑这五种协议
-        self.init_filter = 'arp'
+        self.init_filter = 'http || tcp || udp || arp || icmp'  # 暂时只考虑这五种协议
+        # self.init_filter = 'arp'
         self.cap = pyshark.LiveCapture(interface=nt_card, display_filter=self.init_filter, use_json=True,
                                        include_raw=True)
         self._isStop = False  # 用于控制抓包的线程
@@ -233,6 +233,7 @@ class MyWindow(QDialog):
         self.ui.begin_btn.setEnabled(False)
 
     def stop(self):
+        self.thread._isStop = True
         print("停止执行抓包")
         self.ui.stop_btn.setEnabled(False)
         self.ui.begin_btn.setEnabled(True)
