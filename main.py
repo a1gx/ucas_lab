@@ -173,9 +173,12 @@ class MySortFilterModel(QSortFilterProxyModel):
         dst_ip = self.sourceModel().index(sourceRow, 3, sourceParent)
         pro = self.sourceModel().index(sourceRow, 4, sourceParent)
         regex = self.filterRegExp()
-        return (regex.indexIn(self.sourceModel().data(stamp)) != -1 or regex.indexIn(self.sourceModel().data(src_ip)) != -1
+        return (regex.indexIn(self.sourceModel().data(stamp)) != -1 or regex.indexIn(
+            self.sourceModel().data(src_ip)) != -1
                 or regex.indexIn(self.sourceModel().data(dst_ip)) != -1
                 or regex.indexIn(self.sourceModel().data(pro)) != -1)
+
+
 class MyWindow(QDialog):
     def __init__(self, parent=None):
         super(MyWindow, self).__init__(parent)
