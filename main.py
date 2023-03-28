@@ -5,7 +5,7 @@ import hexdump
 from PyQt5.QtGui import QColor, QStandardItem, QStandardItemModel
 
 from sniffer import Ui_Dialog
-from PyQt5.QtWidgets import QDialog, QApplication, QHeaderView, QAbstractItemView
+from PyQt5.QtWidgets import QDialog, QApplication, QHeaderView, QAbstractItemView, QTreeWidgetItem
 from PyQt5.QtCore import QThread, pyqtSignal, QSortFilterProxyModel, Qt
 import netifaces
 import pyshark
@@ -260,11 +260,26 @@ class MyWindow(QDialog):
             self.ui.treeWidget.takeTopLevelItem(0)
         filter_rule = self.ui.lineEdit.text() # 获取规则
         self.proxymodel.setFilterFixedString(filter_rule) # 通过规则过滤
-        print("过滤的规则为: ", filter_rule)
 
-    def show_detail(self):
-        print("show detail")
-        pass
+    def show_detail(self, item):
+        # 清除之前的信息
+        self.ui.textBrowser.clear()
+        for i in range(self.ui.treeWidget.topLevelItemCount()):
+            self.ui.treeWidget.takeTopLevelItem(0)
+
+        row = item.row()
+        r_idx = int(self.model.index(row, 0).data())
+        hex_data = self.data[r_idx][-2]
+        # 添加16进制信息
+        self.ui.textBrowser.append(hex_data)
+        frame_data = self.data[r_idx][-1]
+        # 将详细信息添加到treeWidget中
+        for frame in frame_data:
+            root_item = QTreeWidgetItem(self.ui.treeWidget)
+            root_item.setText(0, frame)
+            for i in frame_data[frame]:
+                child = QTreeWidgetItem(root_item)
+                child.setText(0, i)
 
 
 if __name__ == '__main__':
