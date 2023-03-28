@@ -19,7 +19,8 @@ class Sniffer(QThread):
 
     def __init__(self, nt_card):
         super(Sniffer, self).__init__()
-        self.init_filter = 'http || tcp || udp || arp || icmp'  # 暂时只考虑这五种协议
+        # self.init_filter = 'http || tcp || udp || arp || icmp'  # 暂时只考虑这五种协议
+        self.init_filter = 'arp'
         self.cap = pyshark.LiveCapture(interface=nt_card, display_filter=self.init_filter, use_json=True,
                                        include_raw=True)
         self._isStop = False  # 用于控制抓包的线程
@@ -106,33 +107,32 @@ class Sniffer(QThread):
                 attach_info = " ".join(Frames['UDP帧'][0:3])
             except:
                 pass
-        # elif ether_type == '0x0806':
-        #     arp = pac.arp
-        #     protocol = 'ARP'
-        #     print(arp)
-        #     # if arp.hw_type == '1':
-        #     #     hard_type = '以太网地址'
-        #     # else:
-        #     #     hard_type = arp.hw_type
-        #     if arp.proto_type == '0x0800':
-        #         pro_type = 'IP地址'
-        #     else:
-        #         pro_type = str(arp.proto_type)
-        #     hard_len = arp.hw_size
-        #     pro_len = arp.proto_size
-        #     if arp.opcode == '1':
-        #         op = '1 - ARP请求'
-        #     else:
-        #         op = '2 - ARP应答'
-        #     send_mac = arp.src_hw_mac
-        #     src_ip = arp.src_proto_ipv4
-        #     dst_mac = arp.dst_hw_mac
-        #     dst_ip = arp.dst_proto_ipv4
-        #     Frames['ARP帧'] = ['协议类型: ' + pro_type, '硬件地址长度: ' + hard_len,
-        #                        '协议地址长度: ' + pro_len,
-        #                        '操作类型: ' + op, '发送者硬件地址: ' + send_mac, '发送者IP地址: ' + src_ip,
-        #                        '目标硬件地址: ' + dst_mac, '目标IP地址: ' + dst_ip]
-        #     attach_info = " ".join(Frames['ARP帧'])
+        elif ether_type == '0x0806':
+            arp = pac.arp
+            protocol = 'ARP'
+            if arp.hw.type == '1':
+                hard_type = '以太网地址'
+            else:
+                hard_type = arp.hw.type
+            if arp.proto.type == '0x0800':
+                pro_type = 'IP地址'
+            else:
+                pro_type = str(arp.proto.type)
+            hard_len = arp.hw.size
+            pro_len = arp.proto.size
+            if arp.opcode == '1':
+                op = '1 - ARP请求'
+            else:
+                op = '2 - ARP应答'
+            send_mac = arp.src.hw_mac
+            src_ip = arp.src.proto_ipv4
+            dst_mac = arp.dst.hw_mac
+            dst_ip = arp.dst.proto_ipv4
+            Frames['ARP帧'] = ['协议类型: ' + pro_type, '硬件地址长度: ' + hard_len,
+                               '协议地址长度: ' + pro_len,
+                               '操作类型: ' + op, '发送者硬件地址: ' + send_mac, '发送者IP地址: ' + src_ip,
+                               '目标硬件地址: ' + dst_mac, '目标IP地址: ' + dst_ip]
+            attach_info = " ".join(Frames['ARP帧'])
         return [tmstmp, src_ip, dst_ip, protocol, attach_info, hex_rep, Frames]
 
     def run(self) -> None:
@@ -242,7 +242,6 @@ class MyWindow(QDialog):
             bg_color = self.pro_color[info[3]]
             index_item = QStandardItem(str(self.row_idx))
             index_item.setBackground(bg_color)
-            print("开始")
             self.model.setItem(self.row_idx, 0, index_item)
             self.data.append(info)
             for i in range(len(info) - 2):
@@ -250,7 +249,6 @@ class MyWindow(QDialog):
                 tmp_item.setBackground(bg_color)
                 self.model.setItem(self.row_idx, i + 1, tmp_item)  # QStandardItem(info[i]))
             self.row_idx += 1
-            print("结束")
 
     def filterRegExpChanged(self):
         print("filter...")
