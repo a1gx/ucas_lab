@@ -268,7 +268,7 @@ class MyWindow(QDialog):
             self.ui.treeWidget.takeTopLevelItem(0)
 
         row = item.row()
-        r_idx = int(self.model.index(row, 0).data())
+        r_idx = int(self.proxymodel.index(row, 0).data())
         hex_data = self.data[r_idx][-2]
         # 添加16进制信息
         self.ui.textBrowser.append(hex_data)
