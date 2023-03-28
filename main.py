@@ -29,7 +29,7 @@ class Sniffer(QThread):
 
     def processer(self, pac):
         ether_protocol_type = {'0x0800': 'IP', '0x0806': 'ARP'}
-        ip_protocol = {1: 'ICMP', 2: 'IGMP', 6: 'TCP', 17: 'UDP'}
+        ip_protocol = {'1': 'ICMP', '2': 'IGMP', '6': 'TCP', '17': 'UDP'}
         hex_rep = hexdump.hexdump(pac, result='return')  # 流量包的二进制表示
         Frames = OrderedDict()  # 这个用于显示流量包的详细信息
         attach_info = ''
@@ -49,7 +49,7 @@ class Sniffer(QThread):
         Frames['以太网II型帧'] = ['时间戳: ' + tmstmp, '目标Mac地址: ' + ether_dst_mac, ' 源Mac地址: ' + ether_src_mac,
                                   '数据字段长度: ' + ether_data_len, '帧内协议类型: ' + ether_protocol_frame]
         if ether_type == '0x0800':
-            ip = pac.data
+            ip = pac.ip
             version = ip.version
             ihl = ip.hdr_len
             total_len = ip.len
@@ -60,8 +60,8 @@ class Sniffer(QThread):
             offset = ip.frag_offset
             ttl = ip.ttl
             protocol = ''
-            if ip.p in ip_protocol:
-                protocol = ip_protocol[ip.p]
+            if ip.proto in ip_protocol:
+                protocol = ip_protocol[ip.proto]
             src_ip = ip.src
             dst_ip = ip.dst
             Frames['IP帧'] = ['IP版本: ' + version, '报头长度: ' + ihl, '封包总长: ' + total_len, '识别码: ' + iden,
