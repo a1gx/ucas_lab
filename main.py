@@ -39,6 +39,7 @@ class Sniffer(QThread):
         ether_type = pac.eth.type
         ether_protocol_frame = ''
         ether_data_len = '0'
+        src_ip, dst_ip, protocol = ['', '', '']
         try:
             ether_data_len = pac.data.len
         except:
@@ -131,6 +132,7 @@ class Sniffer(QThread):
                                '操作类型: ' + op, '发送者硬件地址: ' + send_mac, '发送者IP地址: ' + src_ip,
                                '目标硬件地址: ' + dst_mac, '目标IP地址: ' + dst_ip]
             attach_info = " ".join(Frames['ARP帧'])
+        return [tmstmp, src_ip, dst_ip, protocol, attach_info, hex_rep, Frames]
 
     def run(self) -> None:
         data = []
