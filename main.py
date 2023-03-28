@@ -139,7 +139,7 @@ class Sniffer(QThread):
         data = []
         index = 1
         start_time = time.time()
-        for pac in self.cap.sniff_continuously():
+        for pac in self.cap.sniff_continuously(packet_count=200):
             if not self._isStop:
                 data.append(self.processer(pac))
                 # 每秒发出一次信号来处理数据，然后清空数据
@@ -242,6 +242,7 @@ class MyWindow(QDialog):
             bg_color = self.pro_color[info[3]]
             index_item = QStandardItem(str(self.row_idx))
             index_item.setBackground(bg_color)
+            print("开始")
             self.model.setItem(self.row_idx, 0, index_item)
             self.data.append(info)
             for i in range(len(info) - 2):
@@ -249,6 +250,7 @@ class MyWindow(QDialog):
                 tmp_item.setBackground(bg_color)
                 self.model.setItem(self.row_idx, i + 1, tmp_item)  # QStandardItem(info[i]))
             self.row_idx += 1
+            print("结束")
 
     def filterRegExpChanged(self):
         print("filter...")
