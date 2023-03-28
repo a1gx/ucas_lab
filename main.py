@@ -255,8 +255,12 @@ class MyWindow(QDialog):
             self.row_idx += 1
 
     def filterRegExpChanged(self):
-        print("filter...")
-        pass
+        self.ui.textBrowser.clear() # 首先是清空原先所有的数据
+        for i in range(self.ui.treeWidget.topLevelItemCount()):
+            self.ui.treeWidget.takeTopLevelItem(0)
+        filter_rule = self.ui.lineEdit.text() # 获取规则
+        self.proxymodel.setFilterFixedString(filter_rule) # 通过规则过滤
+        print("过滤的规则为: ", filter_rule)
 
     def show_detail(self):
         print("show detail")
